@@ -80,6 +80,7 @@ from pandas.core.tools.datetimes import to_datetime
 
 import pandas.io.formats.format as fmt
 import pandas.plotting
+from typing import Optional
 
 __all__ = ["Series"]
 
@@ -192,7 +193,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     # Constructors
 
     def __init__(
-        self, data=None, index=None, dtype=None, name=None, copy=False, fastpath=False
+        self, data: Optional[Any]=None, index: Optional[Any]=None, dtype: Optional[Any]=None, name: Optional[Any]=None, copy: bool=False, fastpath: bool=False
     ):
 
         # we are called internally, so short-circuit
@@ -366,7 +367,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     @classmethod
     def from_array(
-        cls, arr, index=None, name=None, dtype=None, copy=False, fastpath=False
+        cls, arr: Any, index: Optional[Any]=None, name: Optional[Any]=None, dtype: Optional[Any]=None, copy: bool=False, fastpath: bool=False
     ):
         """
         Construct Series from array.
@@ -601,7 +602,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         return self.astype(object).values
 
     # ops
-    def ravel(self, order="C"):
+    def ravel(self, order: str="C"):
         """
         Return the flattened underlying data as an ndarray.
 
@@ -616,7 +617,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return self._values.ravel(order=order)
 
-    def compress(self, condition, *args, **kwargs):
+    def compress(self, condition: Any, *args: Any, **kwargs: Any):
         """
         Return selected slices of an array along given axis as a Series.
 
@@ -689,7 +690,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         warnings.warn(msg, FutureWarning, stacklevel=2)
         return self._values.nonzero()
 
-    def put(self, *args, **kwargs):
+    def put(self, *args: Any, **kwargs: Any) -> None:
         """
         Apply the `put` method to its `values` attribute if it has one.
 
@@ -712,7 +713,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return len(self._data)
 
-    def view(self, dtype=None):
+    def view(self, dtype: Optional[Any]=None):
         """
         Create a new view of the Series.
 
@@ -870,7 +871,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         else:
             return construct_return(result)
 
-    def __array__(self, dtype=None):
+    def __array__(self, dtype: Optional[Any]=None):
         """
         Return the values as a NumPy array.
 
@@ -1025,7 +1026,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     # Indexing Methods
 
     @Appender(generic.NDFrame.take.__doc__)
-    def take(self, indices, axis=0, is_copy=False, **kwargs):
+    def take(self, indices: Any, axis: int=0, is_copy: bool=False, **kwargs: Any):
         nv.validate_take(tuple(), kwargs)
 
         indices = ensure_platform_int(indices)
@@ -1075,7 +1076,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         slobj = self.index._convert_slice_indexer(slobj, kind=kind or "getitem")
         return self._get_values(slobj)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Any):
         key = com.apply_if_callable(key, self)
         try:
             result = self.index.get_value(self, key)
@@ -1210,7 +1211,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             return com.maybe_box_datetimelike(self._values[label])
         return self.index.get_value(self._values, label)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         key = com.apply_if_callable(key, self)
         cacher_needs_updating = self._check_is_chained_assignment_possible()
 
@@ -1354,7 +1355,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     def _is_mixed_type(self):
         return False
 
-    def repeat(self, repeats, axis=None):
+    def repeat(self, repeats: Any, axis: Optional[Any]=None):
         """
         Repeat elements of a Series.
 
@@ -1411,7 +1412,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         new_values = self._values.repeat(repeats)
         return self._constructor(new_values, index=new_index).__finalize__(self)
 
-    def reset_index(self, level=None, drop=False, name=None, inplace=False):
+    def reset_index(self, level: Optional[Any]=None, drop: bool=False, name: Optional[Any]=None, inplace: bool=False):
         """
         Generate a new DataFrame or Series with the index reset.
 
@@ -1580,16 +1581,16 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     def to_string(
         self,
-        buf=None,
-        na_rep="NaN",
-        float_format=None,
-        header=True,
-        index=True,
-        length=False,
-        dtype=False,
-        name=False,
-        max_rows=None,
-        min_rows=None,
+        buf: Optional[Any]=None,
+        na_rep: str="NaN",
+        float_format: Optional[Any]=None,
+        header: bool=True,
+        index: bool=True,
+        length: bool=False,
+        dtype: bool=False,
+        name: bool=False,
+        max_rows: Optional[Any]=None,
+        min_rows: Optional[Any]=None,
     ):
         """
         Render a string representation of the Series.
@@ -1706,7 +1707,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return self.index
 
-    def to_dict(self, into=dict):
+    def to_dict(self, into: Any=dict):
         """
         Convert Series to {label -> value} dict or dict-like object.
 
@@ -1741,7 +1742,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         into_c = com.standardize_mapping(into)
         return into_c(self.items())
 
-    def to_frame(self, name=None):
+    def to_frame(self, name: Optional[Any]=None):
         """
         Convert Series to DataFrame.
 
@@ -1793,7 +1794,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     # TODO: integrate bottleneck
 
-    def count(self, level=None):
+    def count(self, level: Optional[Any]=None):
         """
         Return number of non-NA/null observations in the Series.
 
@@ -1832,7 +1833,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         out = np.bincount(obs, minlength=len(lev) or None)
         return self._constructor(out, index=lev, dtype="int64").__finalize__(self)
 
-    def mode(self, dropna=True):
+    def mode(self, dropna: bool=True):
         """
         Return the mode(s) of the dataset.
 
@@ -1917,7 +1918,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         result = super().unique()
         return result
 
-    def drop_duplicates(self, keep="first", inplace=False):
+    def drop_duplicates(self, keep: str="first", inplace: bool=False):
         """
         Return Series with duplicate values removed.
 
@@ -1991,7 +1992,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return super().drop_duplicates(keep=keep, inplace=inplace)
 
-    def duplicated(self, keep="first"):
+    def duplicated(self, keep: str="first"):
         """
         Indicate duplicate Series values.
 
@@ -2067,7 +2068,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return super().duplicated(keep=keep)
 
-    def idxmin(self, axis=0, skipna=True, *args, **kwargs):
+    def idxmin(self, axis: int=0, skipna: bool=True, *args: Any, **kwargs: Any):
         """
         Return the row label of the minimum value.
 
@@ -2137,7 +2138,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             return np.nan
         return self.index[i]
 
-    def idxmax(self, axis=0, skipna=True, *args, **kwargs):
+    def idxmax(self, axis: int=0, skipna: bool=True, *args: Any, **kwargs: Any):
         """
         Return the row label of the maximum value.
 
@@ -2238,7 +2239,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         ),
     )
 
-    def round(self, decimals=0, *args, **kwargs):
+    def round(self, decimals: int=0, *args: Any, **kwargs: Any):
         """
         Round each value in a Series to the given number of decimals.
 
@@ -2274,7 +2275,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
         return result
 
-    def quantile(self, q=0.5, interpolation="linear"):
+    def quantile(self, q: float=0.5, interpolation: str="linear"):
         """
         Return value at the given quantile.
 
@@ -2334,7 +2335,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             # scalar
             return result.iloc[0]
 
-    def corr(self, other, method="pearson", min_periods=None):
+    def corr(self, other: Any, method: str="pearson", min_periods: Optional[Any]=None):
         """
         Compute correlation with `other` Series, excluding missing values.
 
@@ -2385,7 +2386,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             "'{method}' was supplied".format(method=method)
         )
 
-    def cov(self, other, min_periods=None):
+    def cov(self, other: Any, min_periods: Optional[Any]=None):
         """
         Compute covariance with Series, excluding missing values.
 
@@ -2414,7 +2415,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             return np.nan
         return nanops.nancov(this.values, other.values, min_periods=min_periods)
 
-    def diff(self, periods=1):
+    def diff(self, periods: int=1):
         """
         First discrete difference of element.
 
@@ -2478,7 +2479,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         result = algorithms.diff(com.values_from_object(self), periods)
         return self._constructor(result, index=self.index).__finalize__(self)
 
-    def autocorr(self, lag=1):
+    def autocorr(self, lag: int=1):
         """
         Compute the lag-N autocorrelation.
 
@@ -2523,7 +2524,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return self.corr(self.shift(lag))
 
-    def dot(self, other):
+    def dot(self, other: Any):
         """
         Compute the dot product between the Series and the columns of other.
 
@@ -2601,13 +2602,13 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         else:  # pragma: no cover
             raise TypeError("unsupported type: %s" % type(other))
 
-    def __matmul__(self, other):
+    def __matmul__(self, other: Any):
         """
         Matrix multiplication using binary `@` operator in Python>=3.5.
         """
         return self.dot(other)
 
-    def __rmatmul__(self, other):
+    def __rmatmul__(self, other: Any):
         """
         Matrix multiplication using binary `@` operator in Python>=3.5.
         """
@@ -2615,13 +2616,13 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     @Substitution(klass="Series")
     @Appender(base._shared_docs["searchsorted"])
-    def searchsorted(self, value, side="left", sorter=None):
+    def searchsorted(self, value: Any, side: str="left", sorter: Optional[Any]=None):
         return algorithms.searchsorted(self._values, value, side=side, sorter=sorter)
 
     # -------------------------------------------------------------------
     # Combination
 
-    def append(self, to_append, ignore_index=False, verify_integrity=False):
+    def append(self, to_append: Any, ignore_index: bool=False, verify_integrity: bool=False):
         """
         Concatenate two or more Series.
 
@@ -2741,7 +2742,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         ret = ops._construct_result(self, result, new_index, name)
         return ret
 
-    def combine(self, other, func, fill_value=None):
+    def combine(self, other: Any, func: Any, fill_value: Optional[Any]=None):
         """
         Combine the Series with a Series or scalar according to `func`.
 
@@ -2845,7 +2846,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
                 pass
         return self._constructor(new_values, index=new_index, name=new_name)
 
-    def combine_first(self, other):
+    def combine_first(self, other: Any):
         """
         Combine Series values, choosing the calling Series's values first.
 
@@ -2885,7 +2886,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
         return this.where(notna(this), other)
 
-    def update(self, other):
+    def update(self, other: Any) -> None:
         """
         Modify Series in place using non-NA values from passed
         Series. Aligns on index.
@@ -2942,11 +2943,11 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     def sort_values(
         self,
-        axis=0,
-        ascending=True,
-        inplace=False,
-        kind="quicksort",
-        na_position="last",
+        axis: int=0,
+        ascending: bool=True,
+        inplace: bool=False,
+        kind: str="quicksort",
+        na_position: str="last",
     ):
         """
         Sort by the values.
@@ -3117,13 +3118,13 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     def sort_index(
         self,
-        axis=0,
-        level=None,
-        ascending=True,
-        inplace=False,
-        kind="quicksort",
-        na_position="last",
-        sort_remaining=True,
+        axis: int=0,
+        level: Optional[Any]=None,
+        ascending: bool=True,
+        inplace: bool=False,
+        kind: str="quicksort",
+        na_position: str="last",
+        sort_remaining: bool=True,
     ):
         """
         Sort Series by index labels.
@@ -3284,7 +3285,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         else:
             return result.__finalize__(self)
 
-    def argsort(self, axis=0, kind="quicksort", order=None):
+    def argsort(self, axis: int=0, kind: str="quicksort", order: Optional[Any]=None):
         """
         Override ndarray.argsort. Argsorts the value, omitting NA/null values,
         and places the result in the same locations as the non-NA values.
@@ -3322,7 +3323,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
                 np.argsort(values, kind=kind), index=self.index, dtype="int64"
             ).__finalize__(self)
 
-    def nlargest(self, n=5, keep="first"):
+    def nlargest(self, n: int=5, keep: str="first"):
         """
         Return the largest `n` elements.
 
@@ -3420,7 +3421,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return algorithms.SelectNSeries(self, n=n, keep=keep).nlargest()
 
-    def nsmallest(self, n=5, keep="first"):
+    def nsmallest(self, n: int=5, keep: str="first"):
         """
         Return the smallest `n` elements.
 
@@ -3517,7 +3518,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         """
         return algorithms.SelectNSeries(self, n=n, keep=keep).nsmallest()
 
-    def swaplevel(self, i=-2, j=-1, copy=True):
+    def swaplevel(self, i: int=-2, j: int=-1, copy: bool=True):
         """
         Swap levels i and j in a :class:`MultiIndex`.
 
@@ -3540,7 +3541,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             self
         )
 
-    def reorder_levels(self, order):
+    def reorder_levels(self, order: Any):
         """
         Rearrange index levels using input order.
 
@@ -3618,7 +3619,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         result = Series(values, index=self.index.repeat(counts), name=self.name)
         return result
 
-    def unstack(self, level=-1, fill_value=None):
+    def unstack(self, level: int=-1, fill_value: Optional[Any]=None):
         """
         Unstack, a.k.a. pivot, Series with MultiIndex to produce DataFrame.
         The level involved will automatically get sorted.
@@ -3664,7 +3665,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     # ----------------------------------------------------------------------
     # function application
 
-    def map(self, arg, na_action=None):
+    def map(self, arg: Any, na_action: Optional[Any]=None):
         """
         Map values of Series according to input correspondence.
 
@@ -3794,7 +3795,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         **_shared_doc_kwargs
     )
     @Appender(generic._shared_docs["aggregate"])
-    def aggregate(self, func, axis=0, *args, **kwargs):
+    def aggregate(self, func: Any, axis: int=0, *args: Any, **kwargs: Any):
         # Validate the axis parameter
         self._get_axis_number(axis)
         result, how = self._aggregate(func, *args, **kwargs)
@@ -3823,12 +3824,12 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     agg = aggregate
 
     @Appender(generic._shared_docs["transform"] % _shared_doc_kwargs)
-    def transform(self, func, axis=0, *args, **kwargs):
+    def transform(self, func: Any, axis: int=0, *args: Any, **kwargs: Any):
         # Validate the axis parameter
         self._get_axis_number(axis)
         return super().transform(func, *args, **kwargs)
 
-    def apply(self, func, convert_dtype=True, args=(), **kwds):
+    def apply(self, func: Any, convert_dtype: bool=True, args: Any=(), **kwds: Any):
         """
         Invoke function on values of Series.
 
@@ -4037,16 +4038,16 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     @Appender(generic._shared_docs["align"] % _shared_doc_kwargs)
     def align(
         self,
-        other,
-        join="outer",
-        axis=None,
-        level=None,
-        copy=True,
-        fill_value=None,
-        method=None,
-        limit=None,
-        fill_axis=0,
-        broadcast_axis=None,
+        other: Any,
+        join: str="outer",
+        axis: Optional[Any]=None,
+        level: Optional[Any]=None,
+        copy: bool=True,
+        fill_value: Optional[Any]=None,
+        method: Optional[Any]=None,
+        limit: Optional[Any]=None,
+        fill_axis: int=0,
+        broadcast_axis: Optional[Any]=None,
     ):
         return super().align(
             other,
@@ -4061,7 +4062,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             broadcast_axis=broadcast_axis,
         )
 
-    def rename(self, index=None, **kwargs):
+    def rename(self, index: Optional[Any]=None, **kwargs: Any):
         """
         Alter Series index labels or name.
 
@@ -4131,18 +4132,18 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
 
     @Substitution(**_shared_doc_kwargs)
     @Appender(generic.NDFrame.reindex.__doc__)
-    def reindex(self, index=None, **kwargs):
+    def reindex(self, index: Optional[Any]=None, **kwargs: Any):
         return super().reindex(index=index, **kwargs)
 
     def drop(
         self,
-        labels=None,
-        axis=0,
-        index=None,
-        columns=None,
-        level=None,
-        inplace=False,
-        errors="raise",
+        labels: Optional[Any]=None,
+        axis: int=0,
+        index: Optional[Any]=None,
+        columns: Optional[Any]=None,
+        level: Optional[Any]=None,
+        inplace: bool=False,
+        errors: str="raise",
     ):
         """
         Return Series with specified index labels removed.
@@ -4248,13 +4249,13 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     @Appender(generic.NDFrame.fillna.__doc__)
     def fillna(
         self,
-        value=None,
-        method=None,
-        axis=None,
-        inplace=False,
-        limit=None,
-        downcast=None,
-        **kwargs
+        value: Optional[Any]=None,
+        method: Optional[Any]=None,
+        axis: Optional[Any]=None,
+        inplace: bool=False,
+        limit: Optional[Any]=None,
+        downcast: Optional[Any]=None,
+        **kwargs: Any
     ):
         return super().fillna(
             value=value,
@@ -4269,12 +4270,12 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     @Appender(generic._shared_docs["replace"] % _shared_doc_kwargs)
     def replace(
         self,
-        to_replace=None,
-        value=None,
-        inplace=False,
-        limit=None,
-        regex=False,
-        method="pad",
+        to_replace: Optional[Any]=None,
+        value: Optional[Any]=None,
+        inplace: bool=False,
+        limit: Optional[Any]=None,
+        regex: bool=False,
+        method: str="pad",
     ):
         return super().replace(
             to_replace=to_replace,
@@ -4286,12 +4287,12 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         )
 
     @Appender(generic._shared_docs["shift"] % _shared_doc_kwargs)
-    def shift(self, periods=1, freq=None, axis=0, fill_value=None):
+    def shift(self, periods: int=1, freq: Optional[Any]=None, axis: int=0, fill_value: Optional[Any]=None):
         return super().shift(
             periods=periods, freq=freq, axis=axis, fill_value=fill_value
         )
 
-    def memory_usage(self, index=True, deep=False):
+    def memory_usage(self, index: bool=True, deep: bool=False):
         """
         Return the memory usage of the Series.
 
@@ -4345,7 +4346,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             v += self.index.memory_usage(deep=deep)
         return v
 
-    def isin(self, values):
+    def isin(self, values: Any):
         """
         Check whether `values` are contained in Series.
 
@@ -4401,7 +4402,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         result = algorithms.isin(self, values)
         return self._constructor(result, index=self.index).__finalize__(self)
 
-    def between(self, left, right, inclusive=True):
+    def between(self, left: Any, right: Any, inclusive: bool=True):
         """
         Return boolean Series equivalent to left <= series <= right.
 
@@ -4477,7 +4478,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         return lmask & rmask
 
     @Appender(generic.NDFrame.to_csv.__doc__)
-    def to_csv(self, *args, **kwargs):
+    def to_csv(self, *args: Any, **kwargs: Any):
 
         names = [
             "path_or_buf",
@@ -4587,7 +4588,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     def notnull(self):
         return super().notnull()
 
-    def dropna(self, axis=0, inplace=False, **kwargs):
+    def dropna(self, axis: int=0, inplace: bool=False, **kwargs: Any):
         """
         Return a new Series with missing values removed.
 
@@ -4681,7 +4682,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
             else:
                 return self.copy()
 
-    def valid(self, inplace=False, **kwargs):
+    def valid(self, inplace: bool=False, **kwargs: Any):
         """
         Return Series without null values.
 
@@ -4704,7 +4705,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     # ----------------------------------------------------------------------
     # Time series-oriented methods
 
-    def to_timestamp(self, freq=None, how="start", copy=True):
+    def to_timestamp(self, freq: Optional[Any]=None, how: str="start", copy: bool=True):
         """
         Cast to DatetimeIndex of Timestamps, at *beginning* of period.
 
@@ -4729,7 +4730,7 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         new_index = self.index.to_timestamp(freq=freq, how=how)
         return self._constructor(new_values, index=new_index).__finalize__(self)
 
-    def to_period(self, freq=None, copy=True):
+    def to_period(self, freq: Optional[Any]=None, copy: bool=True):
         """
         Convert Series from DatetimeIndex to PeriodIndex with desired
         frequency (inferred from index if not passed).
