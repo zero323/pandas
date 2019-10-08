@@ -229,11 +229,11 @@ class CSSResolver:
 
         return expand
 
-    expand_border_color = _side_expander("border-{:s}-color")
-    expand_border_style = _side_expander("border-{:s}-style")
-    expand_border_width = _side_expander("border-{:s}-width")
-    expand_margin = _side_expander("margin-{:s}")
-    expand_padding = _side_expander("padding-{:s}")
+    expand_border_color = _side_expander("border-{:s}-color")  # type: ignore
+    expand_border_style = _side_expander("border-{:s}-style")  # type: ignore
+    expand_border_width = _side_expander("border-{:s}-width")  # type: ignore
+    expand_margin = _side_expander("margin-{:s}")              # type: ignore
+    expand_padding = _side_expander("padding-{:s}")            # type: ignore
 
     def parse(self, declarations_str):
         """Generates (prop, value) pairs from declarations
