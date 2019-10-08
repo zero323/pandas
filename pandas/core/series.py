@@ -5,13 +5,14 @@ from collections import OrderedDict
 from io import StringIO
 from shutil import get_terminal_size
 from textwrap import dedent
-from typing import Any, Callable
+from typing import Any, Callable, Hashable, Tuple
 import warnings
 
 import numpy as np
 
 from pandas._config import get_option
 
+from pandas._typing import Axes, Dtype
 from pandas._libs import index as libindex, lib, reshape, tslibs
 from pandas.compat import PY36
 from pandas.compat.numpy import function as nv
@@ -193,7 +194,13 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
     # Constructors
 
     def __init__(
-        self, data: Optional[Any]=None, index: Optional[Any]=None, dtype: Optional[Any]=None, name: Optional[Any]=None, copy: bool=False, fastpath: bool=False
+        self,
+        data: Optional[Any] = None,
+        index: Optional[Axes] = None,
+        dtype: Optional[Dtype] = None,
+        name: Optional[Hashable] = None,
+        copy: bool = False,
+        fastpath: bool = False
     ):
 
         # we are called internally, so short-circuit
