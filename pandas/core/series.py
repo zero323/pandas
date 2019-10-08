@@ -5,7 +5,7 @@ from collections import OrderedDict
 from io import StringIO
 from shutil import get_terminal_size
 from textwrap import dedent
-from typing import Any, Callable, Hashable, Tuple
+from typing import Any, Callable, Hashable, Mapping, Tuple
 import warnings
 
 import numpy as np
@@ -325,7 +325,12 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
         self.name = name
         self._set_axis(0, index, fastpath=True)
 
-    def _init_dict(self, data, index=None, dtype=None):
+    def _init_dict(
+            self,
+            data: Mapping,
+            index: Optional[Axes] = None,
+            dtype: Optional[Dtype] = None
+    ) -> Tuple[SingleBlockManager, Index]:
         """
         Derive the "_data" and "index" attributes of a new Series from a
         dictionary input.
